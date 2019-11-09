@@ -33,10 +33,19 @@ func (t *tScreen) termioInit() error {
 	var raw *unix.Termios
 	var tio *unix.Termios
 
-	if t.in, e = os.OpenFile("/dev/tty", os.O_RDONLY, 0); e != nil {
+	ttyIn := os.Getenv("TTYIN")
+	if len(ttyIn) == 0 {
+		ttyIn = "/dev/tty"
+	}
+	ttyOut := os.Getenv("TTYOUT")
+	if len(ttyOut) == 0 {
+		ttyOut = "/dev/tty"
+	}
+
+	if t.in, e = os.OpenFile(ttyIn, os.O_RDONLY, 0); e != nil {
 		goto failed
 	}
-	if t.out, e = os.OpenFile("/dev/tty", os.O_WRONLY, 0); e != nil {
+	if t.out, e = os.OpenFile(ttyOut, os.O_WRONLY, 0); e != nil {
 		goto failed
 	}
 
