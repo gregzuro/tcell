@@ -49,7 +49,7 @@ func (t *tScreen) termioInit() error {
 		goto failed
 	}
 
-	tio, e = unix.IoctlGetTermios(int(t.out.Fd()), unix.TCGETS)
+	tio, e = unix.IoctlGetTermios(int(t.in.Fd()), unix.TCGETS)
 	if e != nil {
 		goto failed
 	}
@@ -79,7 +79,7 @@ func (t *tScreen) termioInit() error {
 	raw.Cc[unix.VMIN] = 1
 	raw.Cc[unix.VTIME] = 0
 
-	e = unix.IoctlSetTermios(int(t.out.Fd()), unix.TCSETS, raw)
+	e = unix.IoctlSetTermios(int(t.in.Fd()), unix.TCSETS, raw)
 	if e != nil {
 		goto failed
 	}
@@ -109,7 +109,7 @@ func (t *tScreen) termioFini() {
 	<-t.indoneq
 
 	if t.out != nil && t.tiosp != nil {
-		unix.IoctlSetTermios(int(t.out.Fd()), unix.TCSETSF, t.tiosp.tio)
+		unix.IoctlSetTermios(int(t.in.Fd()), unix.TCSETSF, t.tiosp.tio)
 		t.out.Close()
 	}
 
